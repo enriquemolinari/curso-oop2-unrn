@@ -1,0 +1,401 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Frameworks Orientados a Objetos</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/agate.css">
+
+		<link rel="stylesheet" href="css/font-4.5.0-awesome.min.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+		<style>
+				section.pantallacompleta {
+							 width: 100%;
+							 height: 100%;
+					 }
+			 			.column-container{
+			 		    display: flex;
+			 			}
+			 			.col{
+			 		    flex: 1;
+			 			}
+			 			u.dotted {
+			 	  		border-bottom: 1px dashed #999;
+			 	  		text-decoration: none;
+			 			}
+						h1.titulocolor,h2.titulocolor,h3.titulocolor {
+							color: #369FFB;
+						}
+						section {
+							color: #AAAA;
+						}
+						section strong {
+							color: #FFFF;
+							font-style: bold;
+						}
+						section w {
+							color: #FFFF;
+							font-style: normal;
+						}
+			 </style>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h2>Frameworks</h2>
+					<h3>Orientados a Objetos</h3>
+				</section>
+				<section>
+					<h2>¿Qué es un Framework?</h2>
+				</section>
+				<section>
+					<h3 class="titulocolor">Un Framework...</h3>
+					<br/>
+					<p class="fragment">Una técnica particular de implementación para construir <strong>familias de aplicaciones</strong></p>
+				</section>
+				<section>
+					<h3 class="titulocolor">Dada una familia de aplicaciones, un Framework...</h3>
+					<ul>
+						<li class="fragment">Representa un <strong>Diseño Común</strong> y una <strong>Implementación parcial</strong> de dicha familia de aplicaciones.</li>
+						<li class="fragment">Es una solución genérica para un conjunto de problemas similares</li>
+					</ul>
+				</section>
+				<section>
+					<h3 class="titulocolor">Dada una familia de aplicaciones, un Framework...</h3>
+					<ul>
+						<li class="fragment"><strong>Incompleto por naturaleza</strong>: funcionalidad específica desarrollada por el <w>usuario</w> del framework</li>
+						<li class="fragment">Las "partes" a completar llevan el nombre de <strong>métodos hook</strong> (hot spots)</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Uds ya saben de...</h3>
+					<h4>JDBC</h4>
+					<pre><code class="java" code-trim data-noescape contenteditable style="font-size:18px">public void nuevoConcurso(Concurso concurso, Universidad unrn) {</span>
+<span>  // ...</span>
+<span>  PreparedStatement statement = conn.prepareStatement("insert into</span>
+<span>                        concurso(id, nombre, id_univ) values (?, ?, ?)");) {</span>
+<span>  statement.setString(1, concurso.id());</span>
+<span>  statement.setString(2, concurso.nombre());</span>
+<span>  statement.setString(3, unrn.id());</span>
+<span>  statement.executeUpdate();</span>
+<span>  // ... </span>
+<span>}</span></code></pre>
+					<aside class="notes">De esta forma vemos los objetos como estructura de datos, obteniendo su estado interno via getters para generar sentencias SQL.
+						Uno tiende a poner lógica de negocios en los métodos DAO de esta forma y no debería ser así.
+					</aside>
+				</section>
+				<section>
+					<h4 class="fragment">¿No hay una forma mejor?</h4>
+					<h3 class="fragment">Persistencia Orientada a Objetos</h3>
+					<blockquote class="fragment"><u>Transparencia</u>: El desarrollador tendría que preocuparse lo menos posible por la persistencia para centrarse en el modelo de objetos.</blockquote>
+					<blockquote class="fragment"><u>Transparencia</u> == <u>Ortogonalidad</u> de la Persistencia.</blockquote>
+				</section>
+				<section>
+					<h3>Persistencia Orientada a Objetos</h3>
+					<h4>¿Como sería más Transparente?</h4>
+					<p class="fragment">Veamos...</p>
+					<pre class="fragment"><code class="java" code-trim data-noescape contenteditable style="font-size:18px">public class Universidad {
+  private Set&lt;Concurso> cs = new HashSet&lt;>();
+  public void nuevoConcurso(Concurso c) {
+    cs.add(c);
+  }
+  ...
+}
+<span class="fragment">public void nuevoConcurso(String nombreConcurso, String idUniversidad) {</span>
+<span class="fragment">  Concurso c = new Concurso(nombreConcurso);</span>
+<span class="fragment">  Universidad unrn = //miDb.traer(idUniversidad) unrn de la base de datos</span>
+<span class="fragment">  unrn.nuevoConcurso(c);</span>
+<span class="fragment">}</span></code></pre>
+					<aside class="notes">Notar que hacer la instancia de Concurso c persistente es totalmente transparente. No es tan transparente el traer de la BD a unrn.<aside>
+				</section>
+				<section>
+					<h3>Persistencia Orientada a Objetos</h3>
+					<p>¿y cómo es posible?</p>
+					<h4 class="fragment"><strong>Persistencia por Alcance</strong></h4>
+					<ul>
+						<li class="fragment">Objeto al cual se puede llegar a partir de un objeto ya persistente, debe ser necesariamente persistente.</li>
+						<li class="fragment">Esto nos regala una forma elegante de diseñar, ya que para persistir un objeto solo tenemos que vincularlo a otro ya persistente.</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Persistencia Orientada a Objetos</h3>
+					<p>¿Quién implementa la Persistencia por Alcance?</p>
+					<h4 class="fragment"><strong>Contexto de Persistencia</strong></h4>
+					<ul>
+						<li class="fragment">Maneja y monitorea en memoria todas las instancias de las clases persistentes.</li>
+						<li class="fragment">Reconoce cuando una instancia fue modificada para persistirla.</li>
+						<li class="fragment">Básicamente... es quien se encarga de la <u>Transparencia</u>!</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Persistencia Orientada a Objetos</h3>
+					<p>Entonces... Incorporemos el <u>Contexto de Persistencia</u></p>
+					<pre class="fragment" data-fragment-index="1"><code class="java" code-trim data-noescape contenteditable style="font-size:18px">...
+<span class="fragment" data-fragment-index="1">public void nuevoConcurso(String nombreConcurso, String idUniversidad) {</span>
+<span class="fragment" data-fragment-index="2">  // abro contexto </span>
+<span class="fragment" data-fragment-index="3"><span class="fragment highlight-blue" data-fragment-index="10">  Contexto contexto = BaseDeDatos.conn(); </span></span>
+<span class="fragment" data-fragment-index="4">  Concurso c = new Concurso(nombreConcurso);</span>
+<span class="fragment" data-fragment-index="5">  Universidad unrn = <span class="fragment highlight-blue" data-fragment-index="10">contexto.traer(idUniversidad);</span> //recupero unrn de la bd</span>
+<span class="fragment" data-fragment-index="6">  unrn.nuevoConcurso(c);</span>
+<span class="fragment" data-fragment-index="7">  // cierro contexto </span>
+<span class="fragment" data-fragment-index="8">  <span class="fragment highlight-blue" data-fragment-index="10">contexto.close(); </span></span>
+<span class="fragment" data-fragment-index="9">}</span></code></pre>
+				</section>
+				<section>
+					<h3>Persistencia Orientada a Objetos</h3>
+					<p>¿Y cómo persisto un objeto raiz?</p>
+					<pre class="fragment" data-fragment-index="1"><code class="java" code-trim data-noescape contenteditable style="font-size:18px">...
+<span class="fragment" data-fragment-index="1">public void nuevaUniversidad(String nombreUniversidad) {</span>
+<span class="fragment" data-fragment-index="2">  // abro contexto </span>
+<span class="fragment" data-fragment-index="3"><span class="fragment highlight-blue" data-fragment-index="10">  Contexto contexto = BaseDeDatos.conn(); </span></span>
+<span class="fragment" data-fragment-index="4">  Universidad unrn = new Universidad(nombreUniversidad, ...);</span>
+<span class="fragment" data-fragment-index="5">  <span class="fragment highlight-green" data-fragment-index="10">contexto.persistir(unrn);</span></span>
+<span class="fragment" data-fragment-index="7">  // cierro contexto </span>
+<span class="fragment" data-fragment-index="8">  <span class="fragment highlight-blue" data-fragment-index="10">contexto.close(); </span></span>
+<span class="fragment" data-fragment-index="9">}</span></code></pre>
+				</section>
+
+				<section>
+					<h3>Persistencia Orientada a Objetos</h3>
+					<p>¿Y cómo modifico un objeto?</p>
+					<p class="fragment" data-fragment-index="0"><u>Persistencia por Alcance</u> también...</p>
+					<pre class="fragment" data-fragment-index="1"><code class="java" code-trim data-noescape contenteditable style="font-size:18px">public class Universidad {
+  private Set&lt;Concurso> cs = new HashSet&lt;>();
+  ...
+  public void nuevoDomicilio(String nuevoDomicilio) {
+    this.domicilio = nuevoDocimilio;
+  }
+}
+<span class="fragment" data-fragment-index="2">public void modificarUniversidad(String nuevoNombre, String idUniversidad) {</span>
+<span class="fragment" data-fragment-index="3">  // abro contexto </span>
+<span class="fragment" data-fragment-index="4"><span class="fragment highlight-blue" data-fragment-index="10">  Contexto contexto = BaseDeDatos.conn(); </span></span>
+<span class="fragment" data-fragment-index="5">  Universidad unrn = <span class="fragment highlight-blue" data-fragment-index="10">contexto.traer(idUniversidad);</span> //recupero unrn de la bd</span>
+<span class="fragment" data-fragment-index="6">  <span class="fragment highlight-green" data-fragment-index="10">unrn.nuevoDomicilio("San Martin 245");</span></span>
+<span class="fragment" data-fragment-index="7">  // cierro contexto </span>
+<span class="fragment" data-fragment-index="8">  <span class="fragment highlight-blue" data-fragment-index="10">contexto.close(); </span></span>
+<span class="fragment" data-fragment-index="9">}</span></code></pre>
+				</section>
+
+				<section>
+					<h3>Persistencia Orientada a Objetos</h3>
+					<p>Reflexiones hasta aca...</p>
+					<ul>
+						<li class="fragment">La Persistencia OO me ofrece una forma mucho más transparente de Persistir mis objetos.</li>
+						<li class="fragment">Principalmente basada en el concepto de <strong>Persistencia por Alcance</strong>.</li>
+						<li class="fragment">Para poder utilizarlo debo "envolver" mis sentencias en el ámbito del contexto de persistencia.</li>
+					</ul>
+				</section>
+
+				<section data-transition="slide" data-background="#b5533c" data-background-transition="zoom">
+					<h3>Persistencia Orientada a Objetos</h3>
+					<h4>¿Qué más tenemos que saber?</h4>
+					<p class="fragment"><i>Ciclo de Vida de los Objetos Persistentes</i></p>
+				</section>
+				<section>
+					<h3>Ciclo de Vida de los Objetos Persistentes</h3>
+					<p class="fragment">¿Cual es el ciclo de vida de los Objetos? (olvidemos la persistencia por un ratito)</p>
+					<p class="fragment"><strong>new</strong>: Se crea la instancia y se aloja en memoria</p>
+					<p class="fragment"><strong>delete</strong>: El Garbage Colector se encarga</p>
+					<blockquote class="fragment">Al incorporar persistencia se agregan nuevos estados.</blockquote>
+				</section>
+				<section>
+					<h3>Persistencia Orientada a Objetos</h3>
+					<p>Ciclo de Vida de los Objetos Persistentes</p>
+					<img src="imgs/entity-states.png" class="plain">
+				</section>
+				<section>
+					<h3>Persistencia Orientada a Objetos</h3>
+					<p>Revisemos los estados de estas instancias...</p>
+					<pre class="fragment" data-fragment-index="1"><code class="java" code-trim data-noescape contenteditable style="font-size:18px">...
+<span class="fragment" data-fragment-index="1">public void nuevoConcurso(String nombreConcurso, String idUniversidad) {</span>
+<span class="fragment" data-fragment-index="2">  // abro contexto </span>
+<span class="fragment" data-fragment-index="3"><i>  Contexto contexto = BaseDeDatos.conn(); </i></span>
+<span class="fragment" data-fragment-index="4">  Concurso <span class="fragment highlight-green" data-fragment-index="4">c</span> = new Concurso(nombreConcurso);</span>
+<span class="fragment" data-fragment-index="5">  Universidad <span class="fragment highlight-blue" data-fragment-index="5">unrn</span> = <i>contexto.traer(idUniversidad);</i> //recupero unrn de la bd</span>
+<span class="fragment" data-fragment-index="6">  unrn.nuevoConcurso(c);</span>
+<span class="fragment" data-fragment-index="7">  // cierro contexto </span>
+<span class="fragment" data-fragment-index="8">  <i>contexto.close();</i> </span>
+<span class="fragment" data-fragment-index="9">}</span></code></pre>
+				<p class="fragment" data-fragment-index="4">¿Cuál es el estado de <i><span class="fragment highlight-green" data-fragment-index="4">c</span></i>?</p>
+				<p class="fragment" data-fragment-index="5">¿Y el estado de <i><span class="fragment highlight-blue" data-fragment-index="4">unrn</span></i>?</p>
+				<p class="fragment">¿Cuando quedan en estado <u>detached</u>?</p>
+				</section>
+
+				<section>
+					<h3>Persistencia Orientada a Objetos</h3>
+					<p>Ciclo de Vida de los Objetos Persistentes</p>
+					<p class="fragment">Repasemos...</p>
+					<ul>
+						<li class="fragment">Es con los objetos en estado <u>Persistent</u> con los que puedo utilizar Persistencia por Alcance.</li>
+						<li class="fragment">Con los objetos en estado <u>Detached</u> quedo <b>solo</b> en <b>memoria</b> volatil.</li>
+					</ul>
+				</section>
+
+				<section data-transition="slide" data-background="#b5533c" data-background-transition="zoom">
+					<h3>Persistencia Orientada a Objetos</h3>
+					<h4>¿Y qué más tenemos que saber?</h4>
+					<p class="fragment"><i>Persistencia en Cascada</i> & Recuperación de instancias en forma <i>Lazy</i> vs <i>Early</i></p>
+				</section>
+				<section>
+					<h3>Persistencia Orientada a Objetos</h3>
+					<p>Persistencia en Cascada</p>
+					<pre><code class="java" code-trim data-noescape contenteditable style="font-size:18px">public void nuevoProducto() {
+ <span><i>Contexto contexto = BaseDeDatos.conn();</i></span>
+ <span class="fragment"  data-fragment-index="2">Categoria <span class="fragment highlight-blue" data-fragment-index="5">elec</span> = new Categoria("electrodoméstico");</span>
+ <span class="fragment"  data-fragment-index="2">Producto <span class="fragment highlight-blue" data-fragment-index="5">tv</span> = new Producto("TV", elec);</span>
+ <span class="fragment" data-fragment-index="3"><span class="fragment strike" data-fragment-index="7">contexto.persistir(elec);</span></span>
+ <span class="fragment" data-fragment-index="4">manager.persistir(tv);</span>
+ <span><i>contexto.close();</i></span>
+}</code></pre>
+				<p class="fragment" data-fragment-index="5">¿Podría solamente persistir <span class="fragment highlight-blue" data-fragment-index="4">tv</span> y que se persista su categoria <span class="fragment highlight-blue" data-fragment-index="4">elec</span> directamente?</p>
+				<p class="fragment">Sí. Debería configurar los colaboradores de <i>Producto</i> como <i>cascade</i> = true</p>
+				</section>
+				<section>
+    			 <h2>Recuperación: Early vs Lazy</h2>
+					 <p class="fragment">Supongamos el siguiente modelo:</p>
+					 <pre class="fragment"><code class="java" code-trim data-noescape contenteditable style="font-size:18px">public class Universidad {
+ private Set&lt;Concurso> concursos = new HashSet&lt;Concurso>();
+ private Categoria categoria;
+ private String domicilio;
+ public void nuevoConcurso(Concurso c) {
+  cs.add(c);
+ }
+ ...
+}
+public class Concurso {
+ private List&lt;Persona> inscriptos = new ArrayList&lt;>();
+ ...
+ ...
+}</pre></code>
+				</section>
+				<section>
+    			 <h2>Early vs Lazy</h2>
+					 <p class="fragment">Segun el modelo anterior, si traemos de la BD la instancia <i>unrn</i>:</p>
+					 <pre class="fragment"><code class="java" code-trim data-noescape contenteditable style="font-size:18px">...
+Contexto contexto = BaseDeDatos.conn();
+Universidad unrn = contexto.traer(idUnrn);
+contexto.close();
+...</pre></code>
+					<p class="fragment">¿Qué trae a memoria junto con <i>unrn</i>? ¿su instancia de categoria? ¿sus concursos?</p>
+				</section>
+				<section data-background-size="40%" data-background-image="imgs/modelo.jpg" class="fig-container pantallacompleta"
+					data-fig-id="fig-collision-detection"
+					data-file="_diagram_earlygraph.html">
+					<h2>Early vs Lazy</h2>
+					<aside class="notes">Ir mostrando de a poco el grafo de objetos para ir preguntandole a los alumnos hasta donde se trae...</aside>
+				</section>
+				<section data-background-image="imgs/bomb.jpg"></section>
+				<section data-background-size="40%" data-background-image="imgs/oome.png"></section>
+				<section>
+					<h2>Early vs Lazy</h2>
+					<p class="fragment"><u>Por colaborador</u> se configura si deseo <i>early</i> o <i>lazy</i></p>
+					<p class="fragment"><b>Early</b> (temprano): Al recuperar una instancia, recupero su colaborador también.</p>
+					<p class="fragment"><b>Lazy</b> (tardío): Al recuperar una instancia, inyecta en su colaborador un <u>Proxy</u>, quién sabe recuperar el <u>colaborador real</u> solo cuando sea necesario.</p>
+				</section>
+				<section>
+					<h3>Persistencia Orientada a Objetos</h3>
+					<p>Cascade & Early vs Lazy</p>
+					<p class="fragment">Repasemos...</p>
+					<ul>
+						<li class="fragment">Tenemos diferentes configuraciones que realizar en las clases y sus colaboradores.</li>
+						<li class="fragment"><u>Cascade</u> nos permite simplificar la persistencia aún más.</li>
+						<li class="fragment"><u>Early</u> / <u>Lazy</u> nos permiten ajustar la performance segun nuestros casos de uso.</li>
+					</ul>
+				</section>
+
+				<section data-transition="slide" data-background="#b5533c" data-background-transition="zoom">
+					<h3>Persistencia Orientada a Objetos</h3>
+					<h4>Ya finalizando...</h4>
+				</section>
+
+				<section>
+					<h3>Persistencia Orientada a Objetos</h3>
+					<p>Dos formas de obtener Persistencia OO</p>
+					<div class="column-container">
+						<div class="col">
+							<p class="fragment"><img src="imgs/oodb-orm2.png" alt="orm" style="background:none; border:none; box-shadow:none;"></p>
+						</div>
+					</div>
+				</section>
+				<section>
+					<h3>Persistencia Orientada a Objetos</h3>
+					<p>Dos formas de obtener Persistencia OO</p>
+					<div class="column-container">
+						<div class="col">
+							<p><img src="imgs/oodb-orm.png" alt="orm" style="background:none; border:none; box-shadow:none;"></p>
+						</div>
+					</div>
+				</section>
+
+				<section>
+					<h3>Persistencia Orientada a Objetos</h3>
+					<p>¿Con que tema seguimos?</p>
+					<ol>
+						<li class="fragment">Bases de Datos Orientadas a Objetos</li>
+						<li class="fragment">Una Implementación: <a href="https://github.com/tzaeschke/zoodb/">ZooDB</a> (ODBMS) + Trabajo Práctico</li>
+						<li class="fragment">Estudiaremos como funcionan los Object Relacional Mapper (ORM)</li>
+						<li class="fragment">Una Implementación: Hibernate + Trabajo Práctico</li>
+					</ol>
+				</section>
+				<section>
+					<h3>Bibliografía</h3>
+					<ul>
+						<li>Persistencia Orientada a Objetos, Capítulo 1 (Javier Bazzocco, EDULP, 2012)</li>
+						<li>Java Persistence with Hibernate, Capítulos 12 y 13 (Second Edition. Gaving King, 2015)</li>
+						<li><a href="http://www.odbms.org/free-downloads-and-links/object-databases/">www.odbms.org/object databases</a> (papers en línea)</li>
+					</ul>
+				</section>
+				</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+				dependencies: [
+					{ src: 'js/d3.v3.min.js'},
+					{ src: 'plugin/chalkboard/chalkboard.js' },
+					{ src: 'node_modules/reveal.js-d3js/d3js.js' },
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				],
+				chalkboard: {
+					toggleChalkboardButton: { left: "80px" },
+					toggleNotesButton: { left: "130px" },
+				},
+				keyboard: {
+			    67: function() { RevealChalkboard.toggleNotesCanvas() },	// toggle notes canvas when 'c' is pressed
+			    66: function() { RevealChalkboard.toggleChalkboard() },	// toggle chalkboard when 'b' is pressed
+			    46: function() { RevealChalkboard.clear() },	// clear chalkboard when 'DEL' is pressed
+			     8: function() { RevealChalkboard.reset() },	// reset chalkboard data on current slide when 'BACKSPACE' is pressed
+			    68: function() { RevealChalkboard.download() },	// downlad recorded chalkboard drawing when 'd' is pressed
+				},
+			});
+		</script>
+	</body>
+</html>
