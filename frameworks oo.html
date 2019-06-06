@@ -112,6 +112,13 @@
 		        </p>
     			</div>
 				</section>
+
+				<section>
+					<h3 class="titulocolor">Frameworks OO</h3>
+					<p><i>Otra vista del código del framwork vs el código de la aplicación</i></p>
+		      	<img src="imgs/framework-app2.png" style="background:none; border:none; box-shadow:none;">
+				</section>
+
 				<section>
 					<h3 class="titulocolor">Framworks OO</h3>
 					<p><i><strong>Si implementamos una aplicación usando un framework tenemos: </strong></i></p>
@@ -137,20 +144,55 @@
 				<section>
 					<h3 class="titulocolor">¿Qué distingue un Framework de una Librería?</h3>
 					<p class="fragment">En ambos tengo reuso de código...</p>
-					<p class="fragment"><strong>Inversión de control</strong></p>
+					<p class="fragment">Principalmente la <strong>Inversión de control</strong></p>
 		      <img class="fragment" src="imgs/frw-vs-library.png" style="background:none; border:none; box-shadow:none;">
 				</section>
 
-<!--
-				Qué hace que un framework sea un framework: Inversion of control, el framework llama a las clases y no al reves
-				framework vs librerias
+				<section>
+					<h3 class="titulocolor">Puntos de Extensión</h3>
+					<p class="fragment">"Separa el código que cambia de aquel que no cambia"</p>
+					<p class="fragment">Son las partes del framework donde un usuarios/desarrollador del framework puede modificar o agregar comportamiento.</p>
+					<p class="fragment"><strong>Todo aquello cómun a las aplicaciones de una familia lo implementa el framework, las diferencias se implementan a travéz de los puntos de extensión</strong>.</p>
+				</section>
 
-				8 - Definiciones de frameworks
-				10 - Domain Frameworks y Application Frameworks
-				reuso de codigo
-				caja blanca vs caja negra
-				diferencias entre patrones y frameworks
-			-->
+				<section>
+					<h3 class="titulocolor">Dos Tipos de Frameworks</h3>
+					<p class="fragment"><strong>Caja Blanca</strong>: Aquellos donde los puntos de extensión se basan en la <strong>herencia</strong> (Usando Template Method)</p>
+					<p class="fragment"><strong>Caja Negra</strong>: Aquellos donde los puntos de extensión se basan en <strong>composición</strong></p>
+					<p class="fragment"><strong>Caja Gris</strong>: Puntos de extensión de <strong>ambas</strong> formas.</p>
+				</section>
+
+				<section>
+					<h3 class="titulocolor">Framworks OO</h3>
+					<blockquote><strong>Veamos un ejemplo en Eclipse...</strong></blockquote>
+				</section>
+
+				<section>
+					<h3 class="titulocolor">Patrones vs Frameworks</h3>
+					<div class="column-container">
+						<div class="col">
+							<p>Patrones</p>
+							<ul>
+								<li style="font-size:32px" data-fragment-index="1" class="fragment">Reutilización de diseño</li>
+								<li style="font-size:32px" data-fragment-index="3" class="fragment">Indica cómo realizar un buen diseño.</li>
+								<li style="font-size:32px" data-fragment-index="5" class="fragment">Independiente del lenguaje.</li>
+								<li style="font-size:32px" data-fragment-index="7" class="fragment">Usualmente cubre un dominio general de problemas.</li>
+								<li style="font-size:32px" data-fragment-index="9" class="fragment">Usualmente cubre una parte pequeña del diseño de una app.</li>
+							</ul>
+						</div>
+						<div class="col">
+							<p>Frameworks</p>
+							<ul>
+								<li style="font-size:32px" data-fragment-index="2" class="fragment">Reutilización de diseño y código.</li>
+								<li style="font-size:32px" data-fragment-index="4" class="fragment">Es diseño e implementación.</li>
+								<li style="font-size:32px" data-fragment-index="6" class="fragment">Especifico de un lenguaje.</li>
+								<li style="font-size:32px" data-fragment-index="8" class="fragment">Usualmente cubre dominios específicos de problemas.</li>
+								<li style="font-size:32px" data-fragment-index="10" class="fragment">Usualmente cubre todo el diseño general de una app.</li>
+							</ul>
+						</div>
+
+				</section>
+
 
 
 				</div>
