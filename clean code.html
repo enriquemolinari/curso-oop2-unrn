@@ -1,0 +1,262 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Clean Code</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/agate.css">
+
+		<link rel="stylesheet" href="css/font-4.5.0-awesome.min.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+		<style>
+				section.pantallacompleta {
+							 width: 100%;
+							 height: 100%;
+					 }
+					 .reveal h1, .reveal h2 , .reveal h3 {
+						 color: #369FFB;
+					 }
+					 h4.titulocolor {
+						 color: #369FFB;
+					 }
+
+					.reveal .slides section .fragment.step-fade-in-then-out {
+						 		opacity: 0;
+								display: none;
+					}
+					.reveal .slides section .fragment.step-fade-in-then-out.current-fragment {
+								opacity: 1;
+								display: inline;
+					}
+			 </style>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h2>Clean Code</h2>
+					<h4>Algo más...</h4>
+				</section>
+			</section>
+				<section>
+					<h3>Nombres de variables...</h3>
+					<pre class="fragment"><code class="java" code-trim data-noescape contenteditable style="font-size:18px">//descripción de la máquina
+String mDesc;
+//Suma acumulada
+int s;
+// Color de ojos
+String cOjos;
+//Cotización del Dolar
+float aux;
+</code></pre>
+				</section>
+				<section>
+					<h3>Revelando su intención</h3>
+					<pre class="fragment"><code class="java" code-trim data-noescape contenteditable style="font-size:18px">String descripcionDeLaMaquina;
+int sumaAcumulada;
+String colorDeOjos;
+float cotizaciónDelDolar;
+</code></pre>
+				</section>
+				<section>
+					<h3>No ser genéricos...</h3>
+					<pre class="fragment"><code class="java" code-trim data-noescape contenteditable style="font-size:18px">//Ejecutar el cálculo de la nómina
+void ejecutar();
+//calcular impuesto a las ganancias
+float calcular();
+// renderizar imagen
+void renderizar();
+</code></pre>
+				</section>
+				<section>
+					<h3>Sino bien específicos...</h3>
+					<pre class="fragment"><code class="java" code-trim data-noescape contenteditable style="font-size:18px">void ejecutarCalculoDeNomina();
+float calcularImpuestoALasGanancias();
+void renderizarImagen();
+</code></pre>
+				</section>
+
+				<section>
+					<h3>Simplificando Condiciones...</h3>
+					<pre class="fragment"><code class="java" code-trim data-noescape contenteditable style="font-size:18px">class Remis {
+ ...
+ double calcularCostoDelViaje() {
+  if (hora > 22:00 || hora < 06:00) {
+   return distanciaRecorrida * 5;
+  } else {
+   return distanciaRecorrida * 3;
+  }
+ }
+}
+</code></pre>
+					<p class="fragment">¿Qué significa esta condición en las reglas del negocio?</p>
+				</section>
+
+				<section>
+					<h3>Simplificando Condiciones...</h3>
+					<pre class="fragment"><code class="java" code-trim data-noescape contenteditable style="font-size:18px">class Remis {
+ ...
+ double calcularCostoDelViaje() {
+  if (esHorarioNocturno()) {
+   return distanciaRecorrida * 5;
+  } else {
+   return distanciaRecorrida * 3;
+  }
+ }
+ private boolean esHorarioNocturno() {
+  return (hora > 22:00 || hora < 06:00);
+ }
+}
+</code></pre>
+				</section>
+
+				<section>
+					<h3>Números Mágicos...</h3>
+					<pre><code class="java" code-trim data-noescape contenteditable style="font-size:18px">class Remis {
+ ...
+ double calcularCostoDelViaje() {
+  if (esHorarioNocturno()) {
+   return distanciaRecorrida * <span class="fragment strike" data-fragment-index="2">5</span> <span class="fragment" data-fragment-index="3">COEFICIENTE_VIAJE_NOCTURNO</span>;
+  } else {
+   return distanciaRecorrida * 3;
+  }
+ }
+}
+</code></pre>
+				</section>
+
+				<section>
+					<h3>Simplificando Condicionales</h3>
+					<p>Ahora los domingos diurnos se cobra un poco mas que el diurno no domingo</p>
+				</section>
+
+				<section>
+					<h3>Simplificando Condicionales</h3>
+					<pre><code class="java" code-trim data-noescape contenteditable style="font-size:18px">class Remis {
+ ...
+ double calcularCostoDelViaje() {
+  if (esHorarioNocturno()) {
+   return distanciaRecorrida * COEFICIENTE_VIAJE_NOCTURNO;
+  } else {
+    if (esDomingo()) {
+     return distanciaRecorrida * COEFICIENTE_VIAJE_DOMINGO;
+    } else {
+     return distanciaRecorrida * COEFICIENTE_VIAJE_DIURNO;
+   }
+  }
+ }
+}
+</code></pre>
+				</section>
+
+				<section>
+					<h3>Simplificando Condicionales</h3>
+					<pre><code class="java" code-trim data-noescape contenteditable style="font-size:18px">class Remis {
+ ...
+ double calcularCostoDelViaje() {
+  if (esHorarioNocturno())
+   return distanciaRecorrida * COEFICIENTE_VIAJE_NOCTURNO;
+
+  if (esDomingo())
+   return distanciaRecorrida * COEFICIENTE_VIAJE_DOMINGO;
+
+  return distanciaRecorrida * COEFICIENTE_VIAJE_DIURNO;
+ }
+}
+</code></pre>
+				</section>
+
+			<section>
+					<h3>Simplificando Condicionales Cont.</h3>
+					<pre><code class="java" code-trim data-noescape contenteditable style="font-size:18px">public class Dni {
+ public Dni(String dni) {
+  if (dni != null) {
+    if (!dni.empty()) {
+     if (lenPermitido(dni)) {
+      if (todosNumeros(dni)) {
+        this.dni = dni;
+      }
+      else {
+       throw new Ex("Debe ingresar números solamente");
+      }
+     } else {
+      throw new Ex("El largo del dni no puede ser menor a 3 ni mayor a 10");
+     }
+    } else {
+     throw new Ex("Dni no puede ser vacío");
+    }
+   } else {
+    throw new Ex("Dni no puede ser nulo");
+   }
+  }
+}</code></pre>
+				</section>
+				<section>
+					<h3>Simplificando Condicionales Cont.</h3>
+					<pre><code class="java" code-trim data-noescape contenteditable style="font-size:18px">public class Dni {
+ public Dni(String dni) {
+  if (dni == null)
+    throw new Ex("Dni no puede ser nulo");
+  if (dni.empty())
+    throw new Ex("Dni no puede ser vacío");
+  if (lenPermitido(dni))
+    throw new Ex("El largo del dni no puede ser menor a 3 ni mayor a 10");
+  if (!todosNumeros(dni)) {
+    throw new Ex("Debe ingresar números solamente");
+
+  this.dni = dni;
+}</code></pre>
+				</section>
+
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+				dependencies: [
+					{ src: 'js/d3.v3.min.js'},
+					{ src: 'plugin/chalkboard/chalkboard.js' },
+					{ src: 'node_modules/reveal.js-d3js/d3js.js' },
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				],
+				chalkboard: {
+					toggleChalkboardButton: { left: "80px" },
+					toggleNotesButton: { left: "130px" },
+				},
+				keyboard: {
+			    67: function() { RevealChalkboard.toggleNotesCanvas() },	// toggle notes canvas when 'c' is pressed
+			    66: function() { RevealChalkboard.toggleChalkboard() },	// toggle chalkboard when 'b' is pressed
+			    46: function() { RevealChalkboard.clear() },	// clear chalkboard when 'DEL' is pressed
+			     8: function() { RevealChalkboard.reset() },	// reset chalkboard data on current slide when 'BACKSPACE' is pressed
+			    68: function() { RevealChalkboard.download() },	// downlad recorded chalkboard drawing when 'd' is pressed
+				},
+			});
+		</script>
+	</body>
+</html>
